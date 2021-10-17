@@ -234,7 +234,7 @@ void copy_part_image(
   int limitLine = tileHeight + iniLine;
   int limitCol = tileWidth + iniCol;
   int lin, col, count = 0;
-  
+
   for (lin = iniLine; lin < limitLine && lin < image->height; lin++)
     for (col = iniCol; col < limitCol && col < image->width; col++)
     {
@@ -318,7 +318,6 @@ void build_mosaic(P3_IMAGE_STRUCT *image, P3_IMAGE_STRUCT **tiles, FILE *fileOut
 {
   int tileWidth = tiles[0]->width;
   int tileHeight = tiles[0]->height;
-  int lowerIndex = 0;
 
   P3_IMAGE_STRUCT *auxImage = allocate_p3_image();
 
@@ -336,15 +335,12 @@ void build_mosaic(P3_IMAGE_STRUCT *image, P3_IMAGE_STRUCT **tiles, FILE *fileOut
     exit(1);
   }
 
-  for (int i = 0; i < ceil(image->height / tileHeight); i++)    /* Divide a imagem em vários blocos iguais de altura das pastilhas */
-    for (int j = 0; j < ceil(image->width / tileWidth); j++)    /* Divide a imagem em vários blocos iguais de largura das pastilhas */
+  for (int i = 0; i < ceil(image->height / tileHeight); i++) /* Divide a imagem em vários blocos iguais de altura das pastilhas */
+    for (int j = 0; j < ceil(image->width / tileWidth); j++) /* Divide a imagem em vários blocos iguais de largura das pastilhas */
     {
-      copy_part_image(image, auxImage, tileWidth, tileHeight, i, j);  /* Copia um bloco da imagem orginal na imagem auxiliar */
+      copy_part_image(image, auxImage, tileWidth, tileHeight, i, j); /* Copia um bloco da imagem orginal na imagem auxiliar */
       calculate_media_pixels(auxImage);
-      
-      lowerIndex = find_lower_distance(auxImage, tiles, qtdTiles);
-
-      replace_tile(image, tiles[lowerIndex], tileWidth, tileHeight, i, j); /* Substitui um bloco da imagem original pela pastilha que possui a menor distância */
+      replace_tile(image, tiles[find_lower_distance(auxImage, tiles, qtdTiles)], tileWidth, tileHeight, i, j); /* Substitui um bloco da imagem original pela pastilha que possui a menor distância */
     }
 
   free(auxImage->data);
